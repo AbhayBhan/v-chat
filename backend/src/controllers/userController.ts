@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import USER from '../models/userModel';
 import bcrypt from 'bcryptjs';
-import { IRegister , ILogin , ICheck, IUser } from "../interfaces/userInterfaces";
+import { IRegister , ILogin , ICheck } from "../interfaces/userInterfaces";
 
 export const registerUser : RequestHandler<unknown, unknown, IRegister, unknown> = async (req,res) => {
     const {email, username, password} = req.body;
