@@ -1,10 +1,33 @@
-import React from "react";
-import { Container, Form, Card, Row, Col, Button } from "react-bootstrap";
+import React, { FormEvent, useState } from "react";
+import { Container, Form, Card, Row, Col, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { ILogin } from "../../interfaces/userInterfaces";
+import { handleLoginRequest } from "../../hooks/login";
+import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
 const Login = (props: Props) => {
+  const [error, setError] = useState<String>("");
+  const [formBody, setFormBody] = useState<ILogin>({
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e : FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const errorMessage = await handleLoginRequest(formBody);
+    if(errorMessage !== "Success"){
+      setError(errorMessage);
+      setTimeout(() => {
+        setError("");
+      },5000);
+      return
+    }
+    navigate('/dashboard');
+  }
+
   return (
     <div
       style={{
@@ -21,16 +44,44 @@ const Login = (props: Props) => {
                 <h3>Login!</h3>
               </Card.Header>
               <Card.Body>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                   <Form.Group className="mt-2">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Email..." />
+                    <Form.Control
+                      value={formBody.email}
+                      onChange={(e) => {
+                        setFormBody({ ...formBody, email: e.target.value });
+                      }}
+                      type="email"
+                      required={true}
+                      placeholder="Email..."
+                    />
                   </Form.Group>
                   <Form.Group className="mt-2">
                     <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password..." />
+                    <Form.Control
+                      value={formBody.password}
+                      onChange={(e) => {
+                        setFormBody({ ...formBody, password: e.target.value });
+                      }}
+                      type="password"
+                      required={true}
+                      placeholder="Password..."
+                    />
                   </Form.Group>
-                  <Link to='/register'><h6 className="mt-2" style={{color : "blue", fontSize : "14px"}}>Don't have an account?</h6></Link>
+                  <Link to="/register">
+                    <h6
+                      className="mt-2"
+                      style={{ color: "blue", fontSize: "14px" }}
+                    >
+                      Don't have an account?
+                    </h6>
+                  </Link>
+                  {
+                    error && (
+                      <Alert className="mt-1" variant="danger">{error}</Alert>
+                    )
+                  }
                   <Button className="mt-2" type="submit">
                     Login
                   </Button>

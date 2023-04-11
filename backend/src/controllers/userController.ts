@@ -1,60 +1,73 @@
 import { RequestHandler } from "express";
-import USER from '../models/userModel';
-import bcrypt from 'bcryptjs';
-import { IRegister , ILogin , ICheck } from "../interfaces/userInterfaces";
+import USER from "../models/userModel";
+import createHttpError from "http-errors";
+import bcrypt from "bcryptjs";
+import { IRegister, ILogin, ICheck } from "../interfaces/userInterfaces";
 
-export const registerUser : RequestHandler<unknown, unknown, IRegister, unknown> = async (req,res) => {
-    const {email, username, password} = req.body;
-    const user = await USER.findOne({email}).exec();
-    if(user){
-        res.status(400).json({
-            message : "User Already Exists!"
-        });
-        return;
-    };
+export const registerUser: RequestHandler<unknown,unknown,IRegister,unknown> = async (req, res, next) => {
+  const { email, username, password } = req.body;
 
-    const salt : string = await bcrypt.genSalt(10);
-    const hashedPassword : string = await bcrypt.hash(password, salt);
+  try {
+    const user = await USER.findOne({ email }).exec();
+
+    if (user) {
+      throw createHttpError(400, "User Already Exists");
+    }
+
+    const salt: string = await bcrypt.genSalt(10);
+    const hashedPassword: string = await bcrypt.hash(password, salt);
 
     const newUser = await USER.create({
-        username, email, password : hashedPassword
+      username,
+      email,
+      password: hashedPassword,
     });
 
     res.status(201).json({
-        id : newUser._id,
-        username : newUser.username,
-        email : newUser.email
+      id: newUser._id,
+      username: newUser.username,
+      email: newUser.email,
     });
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const loginUser: RequestHandler<unknown, unknown, ILogin, unknown> = async (req, res) => {
-    const {email, password} = req.body;
-    const user = await USER.findOne({email}).exec();
+export const loginUser: RequestHandler<unknown,unknown,ILogin,unknown> = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await USER.findOne({ email }).exec();
+    
     if(!user){
-        res.status(400).json({
-            message : "User Doesn't Exists!"
-        });
-        return;
-    };
-
-    if((user.password && (await bcrypt.compare(password, user.password)))){
-        res.status(200).json({
-            id : user._id,
-            username : user.username,
-            email : user.email
-        });
+      throw createHttpError(400, "User Doesn't Exists!")
     }
-}
 
-export const checkUser : RequestHandler<ICheck, unknown, unknown, unknown> = async (req,res) => {
-    const {username} = req.params;
-    const user = await USER.findOne({username}).exec();
+    if(user.password && (await bcrypt.compare(password, user.password))){
+      res.status(200).json({
+        id : user._id,
+        username : user.username,
+        email : user.email
+      });
+    } else {
+      throw createHttpError(401, "Wrong Password!");
+    }  
+  } catch (error) {
+    next(error);
+  }
+};
 
+export const checkUser: RequestHandler<ICheck,unknown,unknown,unknown> = async (req, res, next) => {
+  const { username } = req.params;
+
+  try{
+    const user = await USER.findOne({ username }).exec();
     if(user){
-        res.status(400);
-        res.send("Username already exists!");
-    }else{
-        res.status(200);
-        res.send("Username Available!");
+      throw createHttpError(400, "User Already Exists!");
     }
-}
+
+    res.status(200).send("Username Available!");
+  } catch(err){
+    next(err);
+  }
+};

@@ -8,7 +8,7 @@ export function checkUsername(val: string): Promise<boolean> {
     axios
       .get(`${base_url}/api/user/checkUsername/${val}`)
       .then((res) => {
-        if (res.status === 400) {
+        if (res.status === 401) {
           resolve(false);
         } else {
           resolve(true);
@@ -20,13 +20,9 @@ export function checkUsername(val: string): Promise<boolean> {
   });
 }
 
-export function submitUser(val : IUser) : Promise<string> {
-  return new Promise((resolve, reject) => {
-    axios.post(`${base_url}/api/user/`, val)
+export function submitUser(val : IUser) {
+  axios.post(`${base_url}/api/user/`, val)
     .then((res) => {
-      resolve("success")
-    }).catch((err) => {
-      resolve(err.message);
-    });
-  })
+
+    }).
 }
