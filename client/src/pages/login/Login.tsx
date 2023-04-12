@@ -18,14 +18,14 @@ const Login = (props: Props) => {
   const handleSubmit = async (e : FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errorMessage = await handleLoginRequest(formBody);
-    if(errorMessage !== "Success"){
+    if(errorMessage !== "Success!"){
       setError(errorMessage);
       setTimeout(() => {
         setError("");
       },5000);
-      return
+    }else{
+      navigate('/dashboard');
     }
-    navigate('/dashboard');
   }
 
   return (

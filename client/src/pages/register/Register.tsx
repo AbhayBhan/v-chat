@@ -3,6 +3,7 @@ import { Container, Form, Card, Row, Col, Button, Alert } from "react-bootstrap"
 import { Link , useNavigate } from "react-router-dom";
 import { IRegister } from "../../interfaces/userInterfaces";
 import { checkUsername , submitUser } from "../../hooks/register";
+import axios from "axios";
 
 type Props = {};
 
@@ -31,12 +32,15 @@ const Register = (props: Props) => {
         setError("");
       },5000);
     }else{
-      const errorMessage : string = await submitUser(formBody);
-      if(errorMessage !== "success"){
-        setError(errorMessage);
-        return;
+      const res = await submitUser(formBody);
+      if(res !== "Created!"){
+        setError(res);
+        setTimeout(() => {
+          setError("");
+        },10000);
+      }else{
+        navigate("/dashboard");
       }
-      navigate('/dashboard');
     }
   }
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { IUser } from "../interfaces/userInterfaces";
 
 const base_url: string = "http://localhost:8000";
@@ -8,11 +8,7 @@ export function checkUsername(val: string): Promise<boolean> {
     axios
       .get(`${base_url}/api/user/checkUsername/${val}`)
       .then((res) => {
-        if (res.status === 401) {
-          resolve(false);
-        } else {
-          resolve(true);
-        }
+        resolve(true);
       })
       .catch((err) => {
         resolve(false); 
@@ -20,9 +16,11 @@ export function checkUsername(val: string): Promise<boolean> {
   });
 }
 
-export function submitUser(val : IUser) {
-  axios.post(`${base_url}/api/user/`, val)
-    .then((res) => {
-
-    }).
+export async function submitUser(val : IUser) : Promise<String> {
+  return axios.post(`${base_url}/api/user/`, val)
+    .then(() => {
+      return "Created!";
+    }).catch((err) => {
+      return err.response.data.error;
+    })
 }
