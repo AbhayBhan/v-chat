@@ -3,7 +3,6 @@ import { Container, Form, Card, Row, Col, Button, Alert } from "react-bootstrap"
 import { Link , useNavigate } from "react-router-dom";
 import { IRegister } from "../../interfaces/userInterfaces";
 import { checkUsername , submitUser } from "../../hooks/register";
-import axios from "axios";
 
 type Props = {};
 

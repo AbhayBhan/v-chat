@@ -1,17 +1,19 @@
 import React from 'react';
 import {Col, Container, Row} from 'react-bootstrap';
 import Navbar from '../../partials/Navbar';
+import Sidebar from '../../partials/Sidebar';
 
 type Props = {}
 
 const Dashboard = (props: Props) => {
-  return (
+    {/* Active Chat state create here */}
+    return (
     <div>
         <Navbar />
         <Container fluid>
             <Row>
                 <Col style={{backgroundColor : "purple"}} xs={3}>
-                    jksjfkjsdkffjskfdj
+                    <Sidebar />
                 </Col>
                 <Col style={{backgroundColor : "red"}}>
                     skljfksjfkljdskfkslf

@@ -2,6 +2,8 @@ import { RequestHandler } from "express";
 import USER from "../models/userModel";
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
+import env from "../configs/EnValidator";
+import jwt from 'jsonwebtoken'
 import { IRegister, ILogin, ICheck } from "../interfaces/userInterfaces";
 
 export const registerUser: RequestHandler<unknown,unknown,IRegister,unknown> = async (req, res, next) => {
@@ -27,6 +29,7 @@ export const registerUser: RequestHandler<unknown,unknown,IRegister,unknown> = a
       id: newUser._id,
       username: newUser.username,
       email: newUser.email,
+      token : genToken(newUser._id)
     });
   } catch (err) {
     next(err);
@@ -47,7 +50,8 @@ export const loginUser: RequestHandler<unknown,unknown,ILogin,unknown> = async (
       res.status(200).json({
         id : user._id,
         username : user.username,
-        email : user.email
+        email : user.email,
+        token : genToken(user._id)
       });
     } else {
       throw createHttpError(401, "Wrong Password!");
@@ -71,3 +75,9 @@ export const checkUser: RequestHandler<ICheck,unknown,unknown,unknown> = async (
     next(err);
   }
 };
+
+const genToken = (id : string) : string => {
+  return jwt.sign({id},env.JWT_SECRET,{
+    expiresIn : '1d'
+  });
+}
