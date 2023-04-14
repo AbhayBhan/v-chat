@@ -1,4 +1,4 @@
-export interface IFriendAdd {
+export interface IFriendOps {
     userID : string;
     friendID : string;
 }
