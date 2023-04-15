@@ -7,7 +7,7 @@ export async function handleLoginRequest(val : ILogin) : Promise<string> {
     return axios.post(`${base_url}/api/user/login`, val)
         .then((res) => {
             const token : string = res.data.token;
-            const uid : string = res.data._id;
+            const uid : string = res.data.id;
             localStorage.setItem('authToken',JSON.stringify(token));
             localStorage.setItem('uid',JSON.stringify(uid));
             return "Success!";

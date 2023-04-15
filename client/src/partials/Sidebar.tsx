@@ -6,12 +6,16 @@ import {
   FormControl,
   Button,
   Card,
+  Stack,
 } from "react-bootstrap";
 import { getUser } from "../hooks/findUser";
 import { IAddUser } from "../interfaces/userInterfaces";
 type Props = {};
 
 const Sidebar = (props: Props) => {
+  const uidString: string | null = localStorage.getItem("uid");
+  const uid: any = uidString !== null ? JSON.parse(uidString) : null;
+
   const [query, setQuery] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [foundUser, setFoundUser] = useState<IAddUser>({});
@@ -44,6 +48,8 @@ const Sidebar = (props: Props) => {
                 value={query}
                 type="text"
                 onChange={(e) => {
+                  setError("");
+                  setFoundUser({});
                   setQuery(e.target.value);
                 }}
                 placeholder="Search Username..."
@@ -60,7 +66,18 @@ const Sidebar = (props: Props) => {
               <></>
             ) : (
               <Card className="mt-4">
-                <Card.Body>{foundUser.username}</Card.Body>
+                <Card.Body>
+                  <Stack direction="horizontal" className="mx-auto" gap={5}>
+                    <h5>{foundUser.username}</h5>
+                    {foundUser.friends?.includes(uid) ? (
+                      <Button variant="danger" disabled={true}>
+                        Already Friends
+                      </Button>
+                    ) : (
+                      <Button variant="success">+ Add</Button>
+                    )}
+                  </Stack>
+                </Card.Body>
               </Card>
             )}
           </Row>

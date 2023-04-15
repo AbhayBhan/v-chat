@@ -19,5 +19,6 @@ export interface ILogin {
 export interface IAddUser {
     username ?: string;
     email ?: string;
-    id ?: number|string
+    id ?: number|string;
+    friends ?: Array<string>;
 }

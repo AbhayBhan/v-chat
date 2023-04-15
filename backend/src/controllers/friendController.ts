@@ -79,7 +79,8 @@ export const getUser : RequestHandler<ICheck, unknown, unknown, unknown> = async
       res.status(200).json({
         username : user.username,
         email : user.email,
-        id : user._id
+        id : user._id,
+        friend : user.friends
       });
     } catch(err){
       next(err);
