@@ -4,7 +4,7 @@ import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
 import env from "../configs/EnValidator";
 import jwt from 'jsonwebtoken'
-import { IRegister, ILogin, ICheck } from "../interfaces/userInterfaces";
+import { IRegister, ILogin, ICheck, IUserRet } from "../interfaces/userInterfaces";
 
 export const registerUser: RequestHandler<unknown,unknown,IRegister,unknown> = async (req, res, next) => {
   const { email, username, password } = req.body;
@@ -29,6 +29,7 @@ export const registerUser: RequestHandler<unknown,unknown,IRegister,unknown> = a
       id: newUser._id,
       username: newUser.username,
       email: newUser.email,
+      friends : newUser.friends,
       token : genToken(newUser._id)
     });
   } catch (err) {
@@ -51,6 +52,7 @@ export const loginUser: RequestHandler<unknown,unknown,ILogin,unknown> = async (
         id : user._id,
         username : user.username,
         email : user.email,
+        friends : user.friends,
         token : genToken(user._id)
       });
     } else {
@@ -75,6 +77,23 @@ export const checkUser: RequestHandler<ICheck,unknown,unknown,unknown> = async (
     next(err);
   }
 };
+
+
+//You may wanna use this later to get data for the profile so let it as it is
+export const getUserData : RequestHandler<unknown,unknown,IUserRet,unknown> = async (req,res,next) => {
+  const {id} = req.body; 
+
+  try {
+    const user = await USER.findOne({_id : id}).exec();
+    
+    res.status(200).json({
+      username : user?.username,
+      email : user?.username
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 const genToken = (id : string) : string => {
   return jwt.sign({id},env.JWT_SECRET,{

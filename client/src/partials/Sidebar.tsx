@@ -8,8 +8,8 @@ import {
   Card,
   Stack,
 } from "react-bootstrap";
-import { getUser } from "../hooks/findUser";
-import { IAddUser } from "../interfaces/userInterfaces";
+import { getUser , getFriendData} from "../hooks/findUser";
+import { IAddUser, IFriendData } from "../interfaces/userInterfaces";
 type Props = {};
 
 const Sidebar = (props: Props) => {
@@ -20,13 +20,23 @@ const Sidebar = (props: Props) => {
   const [error, setError] = useState<string>("");
   const [foundUser, setFoundUser] = useState<IAddUser>({});
 
+  const friendArray: string | null = localStorage.getItem("friends");
+  const friends: any = friendArray !== null ? JSON.parse(friendArray) : null;
+
+  const [friendList, setFriendList] = useState<Array<IFriendData>>(friends);
+
   const handleSearch = async () => {
     setError("");
     setFoundUser({});
 
-    const res = await getUser(query);
+    const res : IAddUser|string = await getUser(query);
     if (typeof res === "string") {
       setError(res);
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+    } else if(res.id === uid){
+      setError("Aw that lonely?");
       setTimeout(() => {
         setError("");
       }, 5000);
@@ -69,9 +79,9 @@ const Sidebar = (props: Props) => {
                 <Card.Body>
                   <Stack direction="horizontal" className="mx-auto" gap={5}>
                     <h5>{foundUser.username}</h5>
-                    {foundUser.friends?.includes(uid) ? (
+                    {foundUser.friends?.some(id => id === uid) ? (
                       <Button variant="danger" disabled={true}>
-                        Already Friends
+                        Can't Add
                       </Button>
                     ) : (
                       <Button variant="success">+ Add</Button>
@@ -79,6 +89,25 @@ const Sidebar = (props: Props) => {
                   </Stack>
                 </Card.Body>
               </Card>
+            )}
+          </Row>
+          <Row>
+            <div className="mt-4" style={{borderTop : "solid black 2px"}}>
+            </div>
+          </Row>
+          <Row>
+            {friendList.length !== 0 ? (
+              friendList.map((frnd: IFriendData) => {
+                return (
+                  <Card className="mt-4" key={frnd.username}>
+                    <Card.Body>
+                      {frnd.username}
+                    </Card.Body>
+                  </Card>
+                );
+              })
+            ) : (
+              <></>
             )}
           </Row>
         </Col>

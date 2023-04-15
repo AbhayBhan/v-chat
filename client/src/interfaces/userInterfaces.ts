@@ -16,6 +16,11 @@ export interface ILogin {
     password : string;
 }
 
+export interface IFriendData{
+    username ?: string;
+    email ?: string;
+}
+
 export interface IAddUser {
     username ?: string;
     email ?: string;

@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { IFriendOps } from "../interfaces/friendInterfaces";
+import { IFriendData, IFriendOps, IFriendRet } from "../interfaces/friendInterfaces";
 import { ICheck } from "../interfaces/userInterfaces";
 import USER from "../models/userModel";
 import createHttpError from "http-errors";
@@ -66,6 +66,28 @@ export const remFriend : RequestHandler<unknown,unknown,IFriendOps,unknown> = as
     }
 }
 
+export const getFriendArray : RequestHandler<unknown, unknown, IFriendRet, unknown> = async (req,res,next) => {
+    const {idArray} = req.body;
+
+    try {
+        const friendArr: Array<IFriendData> = await Promise.all(
+          idArray.map(async (id) => {
+            const temp: IFriendData = {};
+            const friend = await USER.findOne({ _id: id }).exec();
+    
+            temp["username"] = friend?.username;
+            temp["email"] = friend?.email;
+    
+            return temp;
+          })
+        );
+    
+        res.status(200).send(friendArr);
+      } catch (err) {
+        next(err);
+      }
+}
+
 export const getUser : RequestHandler<ICheck, unknown, unknown, unknown> = async (req,res,next) => {
     const {username} = req.params;
     
@@ -80,7 +102,7 @@ export const getUser : RequestHandler<ICheck, unknown, unknown, unknown> = async
         username : user.username,
         email : user.email,
         id : user._id,
-        friend : user.friends
+        friends : user.friends
       });
     } catch(err){
       next(err);

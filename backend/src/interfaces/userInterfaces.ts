@@ -8,6 +8,10 @@ export interface IUser extends Document {
     friends : Array<string>;
 }
 
+export interface IUserRet {
+    id : string;
+}
+
 export interface IRegister {
     username : string; 
     email : string;
