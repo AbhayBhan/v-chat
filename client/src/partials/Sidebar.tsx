@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
@@ -8,8 +8,10 @@ import {
   Card,
   Stack,
 } from "react-bootstrap";
-import { getUser , getFriendData} from "../hooks/findUser";
+import { getUser } from "../hooks/findUser";
+
 import { IAddUser, IFriendData } from "../interfaces/userInterfaces";
+import { addFriend } from "../hooks/friends";
 type Props = {};
 
 const Sidebar = (props: Props) => {
@@ -24,6 +26,21 @@ const Sidebar = (props: Props) => {
   const friends: any = friendArray !== null ? JSON.parse(friendArray) : null;
 
   const [friendList, setFriendList] = useState<Array<IFriendData>>(friends);
+
+  useEffect(() => {
+    localStorage.setItem('friends',JSON.stringify(friendList));
+  },[friendList])
+
+  const handleAddFriend = async (friendID : string|number|undefined) => {
+    const res : string = await addFriend(uid,friendID);
+    if(res === "Success"){
+      const temp = {
+        username : foundUser.username,
+        email : foundUser.email
+      }
+      setFriendList([...friendList,temp]);
+    }
+  }
 
   const handleSearch = async () => {
     setError("");
@@ -84,7 +101,9 @@ const Sidebar = (props: Props) => {
                         Can't Add
                       </Button>
                     ) : (
-                      <Button variant="success">+ Add</Button>
+                      <Button onClick={() => {
+                        handleAddFriend(foundUser.id);
+                      }} variant="success">+ Add</Button>
                     )}
                   </Stack>
                 </Card.Body>
