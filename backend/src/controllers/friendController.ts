@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { IFriendOps } from "../interfaces/friendInterfaces";
+import { ICheck } from "../interfaces/userInterfaces";
 import USER from "../models/userModel";
 import createHttpError from "http-errors";
 
@@ -64,3 +65,24 @@ export const remFriend : RequestHandler<unknown,unknown,IFriendOps,unknown> = as
         next(error)
     }
 }
+
+export const getUser : RequestHandler<ICheck, unknown, unknown, unknown> = async (req,res,next) => {
+    const {username} = req.params;
+    
+    try{
+      const user = await USER.findOne({ username }).exec();
+  
+      if(!user){
+        throw createHttpError(400, "User Doesn't Exists");
+      }
+  
+      res.status(200).json({
+        username : user.username,
+        email : user.email,
+        id : user._id
+      });
+    } catch(err){
+      next(err);
+    }
+  }
+  
