@@ -1,10 +1,12 @@
 import React from 'react';
 import {Container , Navbar as Nav} from 'react-bootstrap';
 import { FaUser } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {}
 
 const Navbar = (props: Props) => {
+    const navigate = useNavigate();
   return (
     <div>
         <Nav bg='dark' expand='sm' variant='dark'>
@@ -15,7 +17,10 @@ const Navbar = (props: Props) => {
                     flexDirection : 'row-reverse',
                     cursor : 'pointer'
                 }} 
-                onClick={() => console.log('profileredir')}
+                onClick={() => {
+                    localStorage.clear();
+                    navigate('/login')
+                }}
                 >
                     <FaUser color='white' size={25} />
                 </div>

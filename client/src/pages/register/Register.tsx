@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState , useEffect } from "react";
 import { Container, Form, Card, Row, Col, Button, Alert } from "react-bootstrap";
 import { Link , useNavigate } from "react-router-dom";
 import { IRegister } from "../../interfaces/userInterfaces";
@@ -10,6 +10,16 @@ const Register = (props: Props) => {
   const [isUsernameSafe, setIsUsernameSafe] = useState<Boolean>(false);
   const [error, setError] = useState<String>("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const tokenString: string | null = localStorage.getItem("authToken");
+    const token: any = tokenString !== null ? JSON.parse(tokenString) : null;
+
+    if(token){
+      navigate('/');
+    }
+    
+  },[])
 
   const [formBody, setFormBody] = useState<IRegister>({
     username: "",
@@ -38,7 +48,7 @@ const Register = (props: Props) => {
           setError("");
         },10000);
       }else{
-        navigate("/dashboard");
+        navigate("/");
       }
     }
   }

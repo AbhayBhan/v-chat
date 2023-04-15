@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Container, Form, Card, Row, Col, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { ILogin } from "../../interfaces/userInterfaces";
@@ -15,6 +15,16 @@ const Login = (props: Props) => {
   });
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const tokenString: string | null = localStorage.getItem("authToken");
+    const token: any = tokenString !== null ? JSON.parse(tokenString) : null;
+
+    if(token){
+      navigate('/');
+    }
+    
+  },[])
+
   const handleSubmit = async (e : FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errorMessage = await handleLoginRequest(formBody);
@@ -24,7 +34,7 @@ const Login = (props: Props) => {
         setError("");
       },5000);
     }else{
-      navigate('/dashboard');
+      navigate('/');
     }
   }
 
