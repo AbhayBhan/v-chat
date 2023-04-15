@@ -20,7 +20,9 @@ export async function submitUser(val : IUser) : Promise<String> {
   return axios.post(`${base_url}/api/user/`, val)
     .then((res) => {
       const token : string = res.data.token;
+      const uid : string = res.data._id;
       localStorage.setItem('authToken',JSON.stringify(token));
+      localStorage.setItem('uid',JSON.stringify(uid));
       return "Created!";
     }).catch((err) => {
       return err.response.data.error;

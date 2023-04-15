@@ -15,3 +15,9 @@ export interface ILogin {
     email : string;
     password : string;
 }
+
+export interface IAddUser {
+    username ?: string;
+    email ?: string;
+    id ?: number|string
+}
