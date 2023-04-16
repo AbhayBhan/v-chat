@@ -5,7 +5,8 @@ import morgan from 'morgan'
 import mongoose from "mongoose";
 import createHttpError, { isHttpError } from "http-errors";
 import userRoutes from "./src/routes/userRoutes";
-import friendRoutes from "./src/routes/friendRoutes"
+import friendRoutes from "./src/routes/friendRoutes";
+import messageRoutes from "./src/routes/messageRoutes";
 import env from "./src/configs/EnValidator";
 
 const app : Express = express();
@@ -18,7 +19,7 @@ app.use(express.urlencoded({extended : false}));
 
 app.use('/api/user', userRoutes);
 app.use('/api/friend', friendRoutes);
-// app.use('/api/msg');
+app.use('/api/msg', messageRoutes);
 
 app.use((req, res, next) => {
     next(createHttpError(404, "Endpoint not found"));

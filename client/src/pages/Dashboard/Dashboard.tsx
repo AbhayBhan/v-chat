@@ -1,14 +1,13 @@
-import React from "react";
+import React,{useState} from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import ChatComponent from "../../partials/ChatComponent";
 import Navbar from "../../partials/Navbar";
 import Sidebar from "../../partials/Sidebar";
 
 type Props = {};
 
 const Dashboard = (props: Props) => {
-  {
-    /* Active Chat state create here */
-  }
+  const [chatState, setChatState] = useState(null);
   return (
     <div>
       <Navbar />
@@ -24,7 +23,9 @@ const Dashboard = (props: Props) => {
           >
             <Sidebar />
           </Col>
-          <Col>skljfksjfkljdskfkslf</Col>
+          <Col>
+            {chatState ? <ChatComponent /> : <>Open Some Chat Bro</>}
+          </Col>
         </Row>
       </Container>
     </div>
