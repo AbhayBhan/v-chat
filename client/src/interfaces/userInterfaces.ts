@@ -17,6 +17,7 @@ export interface ILogin {
 }
 
 export interface IFriendData{
+    id ?: string|number|undefined;
     username ?: string;
     email ?: string;
 }

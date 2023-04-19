@@ -12,9 +12,11 @@ import { getUser } from "../hooks/findUser";
 
 import { IAddUser, IFriendData } from "../interfaces/userInterfaces";
 import { addFriend } from "../hooks/friends";
-type Props = {};
+type Props = {
+  setChatState: React.Dispatch<React.SetStateAction<IFriendData|null>>;
+};
 
-const Sidebar = (props: Props) => {
+const Sidebar = ({setChatState}: Props) => {
   const uidString: string | null = localStorage.getItem("uid");
   const uid: any = uidString !== null ? JSON.parse(uidString) : null;
 
@@ -35,6 +37,7 @@ const Sidebar = (props: Props) => {
     const res : string = await addFriend(uid,friendID);
     if(res === "Success"){
       const temp = {
+        id : friendID,
         username : foundUser.username,
         email : foundUser.email
       }
@@ -118,7 +121,9 @@ const Sidebar = (props: Props) => {
             {friendList.length !== 0 ? (
               friendList.map((frnd: IFriendData) => {
                 return (
-                  <Card className="mt-4" key={frnd.username}>
+                  <Card className="mt-4" key={frnd.username} onClick={() => {
+                    setChatState(frnd);
+                  }}>
                     <Card.Body>
                       {frnd.username}
                     </Card.Body>

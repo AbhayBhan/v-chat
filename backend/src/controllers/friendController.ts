@@ -74,7 +74,8 @@ export const getFriendArray : RequestHandler<unknown, unknown, IFriendRet, unkno
           idArray.map(async (id) => {
             const temp: IFriendData = {};
             const friend = await USER.findOne({ _id: id }).exec();
-    
+            
+            temp["id"] = friend?._id;
             temp["username"] = friend?.username;
             temp["email"] = friend?.email;
     

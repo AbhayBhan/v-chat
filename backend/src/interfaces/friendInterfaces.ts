@@ -8,6 +8,7 @@ export interface IFriendRet {
 }
 
 export interface IFriendData {
+    id ?: string;
     username ?: string;
     email ?: string;
 }
