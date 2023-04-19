@@ -1,8 +1,10 @@
-import React,{FormEvent, useState} from "react";
+import React,{FormEvent, useEffect, useState, useRef} from "react";
 import { IFriendData } from "../interfaces/userInterfaces";
 import { IMessage } from "../interfaces/messageInterfaces";
 import { Col, Container, Row, Card, Form, Button } from "react-bootstrap";
+import {io, Socket} from 'socket.io-client';
 import { sendMessage } from "../hooks/messages";
+import {ServerToClientEvents, ClientToServerEvents} from "../interfaces/socketInterfaces";
 
 type Props = {
   chatState: IFriendData | null;
@@ -10,20 +12,34 @@ type Props = {
   setMessages : React.Dispatch<React.SetStateAction<Array<IMessage>>>
 };
 
+const uidString: string | null = localStorage.getItem("uid");
+const uid: any = uidString !== null ? JSON.parse(uidString) : null;
+
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("ws://localhost:8800/");
+socket.emit("addUser", uid);
+
 const ChatComponent = ({ chatState, messages, setMessages }: Props) => {
-  const uidString: string | null = localStorage.getItem("uid");
-  const uid: any = uidString !== null ? JSON.parse(uidString) : null;
+  
 
   const [message, setMessage] =  useState<string>("");
+
+  useEffect(() => {
+    socket.on("getMessage", (data) => {
+      const {senderId,text} = data;
+      console.log(text);
+    });
+  },[socket]);
 
   const handleMessageSend = async (e : FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const res = await sendMessage(uid, chatState?.id, message);
-    setMessage("")
+
     if(typeof(res) === "string"){
       console.log(res);
     }else{
       setMessages([...messages, res]);
+      socket.emit("sendMessage", uid, chatState?.id, message);
+      setMessage("");
     }
   }
 
