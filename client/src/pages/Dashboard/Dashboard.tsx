@@ -58,7 +58,7 @@ const Dashboard = (props: Props) => {
             ) : loading ? (
               <>Loading...</>
             ) : (
-              <ChatComponent chatState={chatState} messages={messages} />
+              <ChatComponent chatState={chatState} messages={messages} setMessages={setMessages} />
             )}
           </Col>
         </Row>

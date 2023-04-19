@@ -7,7 +7,7 @@ export const sendMessage : RequestHandler<unknown,unknown,IMsgSend,unknown> = as
     const {to,from,text} = req.body;
     
     try {
-        const msg = await MSG.create({to,from,text});
+        const msg = await MSG.create({members : [to,from] ,to,from,text});
 
         if(!msg){
             throw createHttpError(400, "Couldn't send message");
@@ -27,7 +27,7 @@ export const getMessages : RequestHandler<unknown,unknown,IGetMsgs,unknown> = as
     const {to,from} = req.body;
 
     try {
-        const msgs = await MSG.find({to,from}).sort({createdAt : 'asc'});
+        const msgs = await MSG.find({members : { $all : [to,from]}}).sort({createdAt : 'asc'});
 
         res.status(200).json({
             messages : msgs
