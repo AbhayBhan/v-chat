@@ -19,8 +19,9 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("ws://loca
 socket.emit("addUser", uid);
 
 const ChatComponent = ({ chatState, messages, setMessages }: Props) => {
+  const uidString: string | null = localStorage.getItem("uid");
+  const uid: any = uidString !== null ? JSON.parse(uidString) : null;
   
-
   const [message, setMessage] =  useState<string>("");
 
   useEffect(() => {
