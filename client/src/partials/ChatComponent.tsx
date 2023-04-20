@@ -27,7 +27,10 @@ const ChatComponent = ({ chatState, messages, setMessages }: Props) => {
   useEffect(() => {
     socket.on("getMessage", (data) => {
       const {senderId,text} = data;
-      console.log(text);
+      console.log(senderId," ",chatState?.id);
+      if(chatState?.id !== undefined && senderId === chatState.id){
+        setMessages([...messages, {to : senderId, from : uid, text}]);
+      }
     });
   },[socket]);
 
@@ -51,12 +54,18 @@ const ChatComponent = ({ chatState, messages, setMessages }: Props) => {
           <Row style={{ height: "80vh" }}>
             <Card>
               <Card.Header>{chatState?.username}</Card.Header>
-              <Card.Body>
+              <Card.Body style={{overflowX : "hidden", overflowY : "auto", height : "70vh"}}>
                 {messages.map((msg) => {
                   return (
+                    msg.from === uid ? (
                     <div key={msg.text} style={{display : "flex", flexDirection : "row-reverse"}}>
                       <h6 style={{color : "white", padding : 10, backgroundColor : "blue", borderRadius : "20px"}}>{msg.text}</h6>
                     </div>
+                    ) : (
+                      <div key={msg.text} style={{display : "flex", flexDirection : "row"}}>
+                        <h6 style={{color : "white", padding : 10, backgroundColor : "green", borderRadius : "20px"}}>{msg.text}</h6>
+                      </div>
+                    )
                   );
                 })}
               </Card.Body>
